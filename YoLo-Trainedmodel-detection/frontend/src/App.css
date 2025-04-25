@@ -1,0 +1,59 @@
+.App {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  padding: 20px;
+  background-color: #f7f9fc;
+  color: #222;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+button {
+  padding: 10px 16px;
+  margin: 10px 6px;
+  font-size: 1rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+input[type="file"] {
+  margin: 10px 0;
+}
+
+canvas, video {
+  border-radius: 8px;
+}
+
+table {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th {
+  background-color: #4caf50;
+  color: white;
+}
+
+@media screen and (max-width: 768px) {
+  .App {
+    padding: 10px;
+  }
+
+  button {
+    width: 100%;
+    margin: 8px 0;
+  }
+}
