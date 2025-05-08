@@ -51,7 +51,7 @@ function App() {
 
         ctx.font = '16px Arial';
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        const text = `${det.label} (${(det.confidence * 100).toFixed(1)}%)`;
+        const text = det.data ? `${det.label}: ${det.data}` : `${det.label} (${(det.confidence * 100).toFixed(1)}%)`;
         const textWidth = ctx.measureText(text).width;
         ctx.fillRect(x1, y1 - 25, textWidth + 10, 25);
 
@@ -64,11 +64,10 @@ function App() {
   const startCamera = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = mediaStream;
-      setStream(mediaStream);
-      setCapturedImage(null);
-      setUploadCanvasVisible(false);
-      setCameraCanvasVisible(false);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+        setStream(mediaStream);
+      }
     } catch (err) {
       console.error('Camera error:', err);
     }
@@ -77,7 +76,7 @@ function App() {
   const stopCamera = () => {
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
-      videoRef.current.srcObject = null;
+      if (videoRef.current) videoRef.current.srcObject = null;
       setStream(null);
     }
     setCapturedImage(null);
@@ -86,6 +85,8 @@ function App() {
 
   const captureImage = () => {
     const video = videoRef.current;
+    if (!video) return;
+
     const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -113,11 +114,8 @@ function App() {
 
   const toggleCameraSection = () => {
     setShowCameraSection((prev) => {
-      if (!prev) {
-        startCamera();
-      } else {
-        stopCamera();
-      }
+      if (!prev) startCamera();
+      else stopCamera();
       return !prev;
     });
   };
@@ -155,12 +153,13 @@ function App() {
                 <video
                   ref={videoRef}
                   autoPlay
+                  muted
                   style={{ width: '100%', maxWidth: '400px', height: '300px', border: '2px solid black' }}
                 />
               )}
               <br />
               <button onClick={captureImage}>Capture & Detect</button>
-              <button onClick={startDetection}>Start Camera</button> {/* Added Start Button */}
+              <button onClick={startDetection}>Start Camera</button>
               <button onClick={stopCamera}>Stop Camera</button>
             </>
           )}
@@ -207,7 +206,7 @@ function App() {
                 return (
                   <tr key={index}>
                     <td style={{ border: '1px solid black', padding: '8px' }}>{det.label}</td>
-                    <td style={{ border: '1px solid black', padding: '8px' }}>{(det.confidence * 100).toFixed(1)}%</td>
+                    <td style={{ border: '1px solid black', padding: '8px' }}>{det.confidence ? `${(det.confidence * 100).toFixed(1)}%` : '-'}</td>
                     <td style={{ border: '1px solid black', padding: '8px' }}>{`${x1}, ${y1}, ${x2}, ${y2}`}</td>
                   </tr>
                 );
